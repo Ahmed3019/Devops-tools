@@ -1,0 +1,99 @@
+# Nexus Installation on Ubuntu
+
+## Overview
+Nexus Repository Manager is a powerful tool for managing software components and artifacts in various formats. This README provides a step-by-step guide to install Nexus on an Ubuntu system.
+
+## Prerequisites
+Before starting the installation, ensure that your system meets the following requirements:
+- **Ubuntu** (version 18.04 or later)
+- **Internet connection**
+
+## Installation Steps
+
+### Step 1: Update Package List
+Open your terminal and update the package list to ensure you have the latest information on available packages:
+```bash
+sudo apt update
+```
+
+### Step 2: Install Required Packages
+Install the necessary packages for running Nexus:
+```bash
+sudo apt install -y openjdk-8-jre-headless net-tools
+```
+
+### Step 3: Download Nexus
+Navigate to the `/opt` directory, where you will install Nexus:
+```bash
+cd /opt
+```
+Download the latest version of Nexus:
+```bash
+wget https://download.sonatype.com/nexus/3/latest-unix.tar.gz
+```
+
+### Step 4: Extract the Nexus Archive
+Once the download is complete, extract the tar.gz file:
+```bash
+tar -zxvf latest-unix.tar.gz
+```
+
+### Step 5: Create a Nexus User
+For security reasons, it is recommended to run Nexus under a dedicated user account. Create a new user named `nexus`:
+```bash
+sudo adduser --system --no-create-home --group nexus
+```
+
+### Step 6: Change Ownership of Nexus Directories
+Change the ownership of the Nexus installation and work directories to the `nexus` user:
+```bash
+sudo chown -R nexus:nexus nexus-*
+sudo chown -R nexus:nexus sonatype-work
+```
+
+### Step 7: Configure Nexus
+Open the `nexus.rc` configuration file to set the user under which Nexus will run:
+```bash
+sudo vim nexus-*/bin/nexus.rc
+```
+Find the line that reads:
+```plaintext
+run_as_user="your-username"
+```
+Change it to:
+```plaintext
+run_as_user="nexus"
+```
+
+### Step 8: Start Nexus
+To start Nexus, switch to the `nexus` user and run the start command:
+```bash
+sudo -u nexus /opt/nexus-*/bin/nexus start
+```
+
+### Step 9: Verify Nexus is Running
+You can verify that Nexus is running by checking the process list:
+```bash
+ps aux | grep nexus
+```
+
+### Step 10: Check Network Status
+Finally, check the network status to ensure Nexus is listening on the correct ports:
+```bash
+netstat -lnpt
+```
+
+## Accessing Nexus
+After installation, you can access the Nexus Repository Manager through your web browser at:
+```
+http://localhost:8081
+```
+The default credentials for the Nexus admin user are:
+- **Username**: admin
+- **Password**: The initial admin password can be found in the following file:
+```plaintext
+/opt/sonatype-work/nexus3/admin.password
+```
+
+## Conclusion
+You have successfully installed the latest version of Nexus Repository Manager on your Ubuntu system. You can now begin managing your software components and artifacts. For further information and documentation, visit the [official Nexus Repository Manager documentation page](https://help.sonatype.com/repomanager3).
